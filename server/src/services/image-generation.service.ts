@@ -2,20 +2,20 @@
  * 图片生成服务
  *
  * 支持多种图片生成 API:
- * 1. DALL-E 3 (OpenAI) - 推荐
- * 2. Stable Diffusion
- * 3. 其他兼容接口
- *
- * 注意：Google Gemini 目前只有图片理解能力(vision)，没有图片生成能力
+ * 1. Gemini Imagen (Google) - 推荐，性价比高
+ * 2. DALL-E 3 (OpenAI) - 高质量
+ * 3. Stable Diffusion - 开源选择
+ * 4. 占位符 - 免费测试
  */
 
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import type { OutlineCard } from '@xhscard/shared/types/index.js'
 
 /**
  * 图片生成配置
  */
 export interface ImageGenerationConfig {
-  provider: 'dalle3' | 'stable-diffusion' | 'placeholder'
+  provider: 'gemini' | 'dalle3' | 'stable-diffusion' | 'placeholder'
   apiKey?: string
   baseUrl?: string
 }
@@ -46,6 +46,58 @@ Design Requirements:
 - Professional yet friendly design
 
 The image should look like a typical high-quality Xiaohongshu post that would get many likes and shares.`
+}
+
+/**
+ * 使用 Gemini 生成图片
+ *
+ * 支持模型：
+ * - gemini-2.0-flash-exp (推荐，最新)
+ * - gemini-2.5-flash (稳定版)
+ * - gemini-3-pro-image (高保真，4K)
+ */
+async function generateWithGemini(
+  prompt: string,
+  apiKey: string
+): Promise<string> {
+  const genAI = new GoogleGenerativeAI(apiKey)
+
+  // 使用 Gemini 2.0 Flash 模型生成图片（代号 "Nano Banana"）
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-2.0-flash-exp'
+  } as any)
+
+  try {
+    // 优化提示词：确保明确要求生成图片
+    const imagePrompt = `Generate an image: ${prompt}`
+
+    const result = await model.generateContent(imagePrompt)
+    const response = result.response
+
+    // 获取生成的图片
+    if (response.candidates && response.candidates[0]) {
+      const candidate = response.candidates[0]
+      if (candidate.content && candidate.content.parts) {
+        for (const part of candidate.content.parts) {
+          // 检查 inlineData 中的图片数据
+          if ((part as any).inlineData) {
+            const inlineData = (part as any).inlineData
+            if (inlineData.data) {
+              const imageData = inlineData.data
+              const mimeType = inlineData.mimeType || 'image/png'
+              // 返回 base64 data URL
+              return `data:${mimeType};base64,${imageData}`
+            }
+          }
+        }
+      }
+    }
+
+    throw new Error('未能从 Gemini 响应中获取图片数据')
+  } catch (error) {
+    console.error('Gemini 图片生成 API 错误:', error)
+    throw new Error(`Gemini 图片生成失败: ${error instanceof Error ? error.message : '未知错误'}`)
+  }
 }
 
 /**
@@ -117,6 +169,12 @@ export async function generateCardImage(
 
   try {
     switch (config.provider) {
+      case 'gemini':
+        if (!config.apiKey) {
+          throw new Error('Gemini Imagen 需要 API Key')
+        }
+        return await generateWithGemini(prompt, config.apiKey)
+
       case 'dalle3':
         if (!config.apiKey) {
           throw new Error('DALL-E 3 需要 API Key')
@@ -191,6 +249,10 @@ export async function generateCardImages(
  * 检查图片生成配置是否有效
  */
 export function validateImageConfig(config: ImageGenerationConfig): { valid: boolean; error?: string } {
+  if (config.provider === 'gemini' && !config.apiKey) {
+    return { valid: false, error: 'Gemini Imagen 需要提供 Gemini API Key' }
+  }
+
   if (config.provider === 'dalle3' && !config.apiKey) {
     return { valid: false, error: 'DALL-E 3 需要提供 OpenAI API Key' }
   }

@@ -308,21 +308,41 @@ curl -X PUT http://localhost:3000/api/cards/outline/outline-1732579200000-abc123
 | `outlineId` | string | ✅ | 大纲 ID | - |
 | `theme` | string | ❌ | 主题色 | pink |
 | `style` | string | ❌ | 图片风格 | xiaohongshu |
-| `apiKey` | string | ❌ | OpenAI API Key（用于 DALL-E 3）| - |
+| `apiKey` | string | ❌ | API Key（Gemini 或 OpenAI）| - |
 
 **图片生成模式:**
 
-1. **使用 DALL-E 3**（需要 OpenAI API Key）
+1. **使用 Gemini**（推荐 ⭐）
+   - 提供 Gemini API Key
+   - 使用 Gemini 2.0 Flash（代号 "Nano Banana"）
+   - 生成高质量 AI 图片
+   - 价格便宜（~$0.03/张）
+   - 一个 API Key 完成所有步骤
+
+2. **使用 DALL-E 3**（备选）
    - 提供以 `sk-` 开头的 OpenAI API Key
    - 生成真实的 AI 图片
-   - 更好的视觉效果
-   - 有成本（~$0.04/张）
+   - 高质量视觉效果
+   - 价格（~$0.04/张）
 
-2. **使用占位符**（默认，无需 API Key）
-   - 不提供 `apiKey` 或提供非 OpenAI Key
+3. **使用占位符**（默认，无需 API Key）
+   - 不提供 `apiKey`
    - 生成占位符图片
    - 适合测试流程
    - 完全免费
+
+**Example Request (Gemini - 推荐):**
+
+```bash
+curl -X POST http://localhost:3000/api/cards/generate-images \
+  -H "Content-Type: application/json" \
+  -d '{
+    "outlineId": "outline-1732579200000-abc123",
+    "theme": "pink",
+    "style": "xiaohongshu",
+    "apiKey": "YOUR_GEMINI_API_KEY"
+  }'
+```
 
 **Example Request (DALL-E 3):**
 
@@ -372,11 +392,12 @@ curl -X POST http://localhost:3000/api/cards/generate-images \
 ```
 
 **特点:**
-- ✅ 使用真实的 AI 图片生成（DALL-E 3）
+- ✅ 支持多种图片生成模型（Gemini / DALL-E 3）
 - ✅ 根据文案内容生成图片
 - ✅ 保持小红书视觉风格
-- ⏱️ 较慢（每张 3-8 秒）
-- 💰 使用 DALL-E 3 有成本
+- ⏱️ 生成时间（每张 3-8 秒）
+- 💰 Gemini: $0.03/张，DALL-E 3: $0.04/张
+- 🆓 占位符模式完全免费
 
 ---
 

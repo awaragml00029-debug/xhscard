@@ -205,9 +205,21 @@ router.post('/generate-images', async (req, res) => {
     updateOutline(outlineId, { status: 'generating' })
 
     // 配置图片生成服务
-    // 默认使用占位符，如果提供了 OpenAI API Key 则使用 DALL-E 3
+    // 优先级：Gemini API Key > OpenAI API Key > 占位符
+    let provider: ImageGenerationConfig['provider'] = 'placeholder'
+
+    if (apiKey) {
+      if (apiKey.startsWith('sk-')) {
+        // OpenAI API Key - 使用 DALL-E 3
+        provider = 'dalle3'
+      } else if (apiKey.startsWith('AI') || apiKey.length > 30) {
+        // Gemini API Key（通常以 AI 开头或较长）- 使用 Gemini（推荐）
+        provider = 'gemini'
+      }
+    }
+
     const imageConfig: ImageGenerationConfig = {
-      provider: apiKey && apiKey.startsWith('sk-') ? 'dalle3' : 'placeholder',
+      provider,
       apiKey: apiKey
     }
 
