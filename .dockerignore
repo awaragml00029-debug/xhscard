@@ -1,0 +1,56 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist
+build
+*.tsbuildinfo
+
+# Development files
+.env.local
+.env.development
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation (optional - 根据需要调整)
+*.md
+!README.md
+
+# Logs
+logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+coverage
+.nyc_output
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+
+# Client (如果不需要打包到 Docker)
+client/node_modules
+client/dist
