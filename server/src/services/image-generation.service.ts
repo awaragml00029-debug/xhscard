@@ -52,8 +52,8 @@ The image should look like a typical high-quality Xiaohongshu post that would ge
  * 使用 Gemini 生成图片
  *
  * 支持模型：
- * - gemini-2.0-flash-exp (推荐，最新)
- * - gemini-2.5-flash (稳定版)
+ * - gemini-2.5-flash (默认，推荐)
+ * - gemini-2.0-flash-exp (实验版)
  * - gemini-3-pro-image (高保真，4K)
  */
 async function generateWithGemini(
@@ -62,9 +62,9 @@ async function generateWithGemini(
 ): Promise<string> {
   const genAI = new GoogleGenerativeAI(apiKey)
 
-  // 使用 Gemini 2.0 Flash 模型生成图片（代号 "Nano Banana"）
+  // 使用 Gemini 2.5 Flash 模型生成图片（代号 "Nano Banana"）
   const model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash-exp'
+    model: 'gemini-2.5-flash'
   } as any)
 
   try {
