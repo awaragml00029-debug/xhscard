@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { initializeGemini, generateCards } from '../services/gemini.service.js'
+import { validateCardCount, getConfig } from '../utils/config.js'
 import type {
   GenerateCardsRequest,
   GenerateCardsResponse,
@@ -12,7 +13,8 @@ const router = Router()
 // 生成小红书卡片
 router.post('/generate', async (req, res) => {
   try {
-    const { topic, count = 5, apiKey } = req.body as GenerateCardsRequest
+    const config = getConfig()
+    const { topic, count = config.content.cards.defaultCount, apiKey } = req.body as GenerateCardsRequest
 
     if (!topic || !topic.trim()) {
       return res.status(400).json({
@@ -28,11 +30,14 @@ router.post('/generate', async (req, res) => {
       } as ApiResponse)
     }
 
+    // 验证并限制卡片数量
+    const validatedCount = validateCardCount(count)
+
     // 初始化 Gemini
     initializeGemini(apiKey)
 
     // 生成卡片内容
-    const cardContents = await generateCards(topic, Math.min(count, 7))
+    const cardContents = await generateCards(topic, validatedCount)
 
     // 转换为完整的 Card 对象
     const themes: CardTheme[] = ['pink', 'blue', 'orange', 'green', 'purple', 'sunset']

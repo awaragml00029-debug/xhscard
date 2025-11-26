@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { initializeGemini, generatePPT } from '../services/gemini.service.js'
 import { generatePPTFile, getAllThemes, PPT_THEMES } from '../services/ppt.service.js'
+import { validateSlideCount, getConfig } from '../utils/config.js'
 import type {
   GeneratePPTRequest,
   GeneratePPTResponse,
@@ -16,9 +17,10 @@ const router = Router()
 // 生成 PPT 内容
 router.post('/generate', async (req, res) => {
   try {
+    const config = getConfig()
     const {
       topic,
-      slideCount = 8,
+      slideCount = config.content.ppt.defaultSlides,
       theme = 'business-blue',
       language = 'zh',
       apiKey
@@ -38,13 +40,16 @@ router.post('/generate', async (req, res) => {
       } as ApiResponse)
     }
 
+    // 验证并限制幻灯片数量
+    const validatedCount = validateSlideCount(slideCount)
+
     // 初始化 Gemini
     initializeGemini(apiKey)
 
     // 生成 PPT 内容
     const pptContents = await generatePPT(
       topic,
-      Math.min(Math.max(slideCount, 5), 15),
+      validatedCount,
       language
     )
 

@@ -1,0 +1,86 @@
+# 配置示例文件
+# 复制此文件为 config.yaml 并填入你的 API Keys
+
+# API 服务器配置
+server:
+  port: 3000
+  cors:
+    enabled: true
+    origins:
+      - http://localhost:5173
+      - http://localhost:3000
+
+# AI 服务商配置（可插拔设计）
+ai_providers:
+  # Gemini Pro（默认）
+  gemini:
+    enabled: true
+    model: gemini-pro
+    # API Key 在运行时通过请求传入，不存储在配置文件中
+
+  # OpenAI（可选）
+  openai:
+    enabled: false
+    model: gpt-4o
+    base_url: https://api.openai.com/v1
+
+  # 自定义兼容接口（可选）
+  custom:
+    enabled: false
+    model: custom-model
+    base_url: https://your-api.com/v1
+
+# 内容生成配置
+content:
+  # 小红书卡片
+  cards:
+    min_count: 3
+    max_count: 7
+    default_count: 5
+    themes:
+      - pink
+      - blue
+      - orange
+      - green
+      - purple
+      - sunset
+
+  # PPT 幻灯片
+  ppt:
+    min_slides: 5
+    max_slides: 15
+    default_slides: 8
+    themes:
+      - business-blue
+      - tech-purple
+      - fresh-green
+      - warm-orange
+      - elegant-gray
+      - vibrant-red
+    # 并发生成配置
+    concurrency:
+      enabled: false  # 是否启用并发生成（未来功能）
+      max_workers: 5
+
+# 导出配置
+export:
+  # PNG 导出（卡片）
+  png:
+    resolution: 2  # 2x 分辨率
+    quality: 0.95
+
+  # PPTX 导出
+  pptx:
+    author: XHS Card Generator
+    company: ''
+
+# 日志配置
+logging:
+  level: info  # debug, info, warn, error
+  format: json # json, text
+
+# 限流配置（生产环境推荐）
+rate_limit:
+  enabled: false
+  window_ms: 900000  # 15 分钟
+  max_requests: 100   # 最多请求数
