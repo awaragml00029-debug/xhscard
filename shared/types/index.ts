@@ -128,3 +128,73 @@ export interface ExportPPTResponse {
 export interface GetPPTThemesResponse {
   themes: PPTThemeConfig[]
 }
+
+// ==================== 三步式卡片生成流程类型 ====================
+
+export type OutlineStatus = 'draft' | 'confirmed' | 'generating' | 'completed' | 'failed'
+export type CardStatus = 'pending' | 'generating' | 'completed' | 'failed'
+
+// 大纲卡片（Step 1 & 2）
+export interface OutlineCard {
+  id: string
+  order: number
+  title: string
+  description: string
+  points: string[]
+  imageUrl?: string           // Step 3 后才有
+  status?: CardStatus         // 图片生成状态
+}
+
+// 完整大纲
+export interface Outline {
+  id: string
+  topic: string
+  status: OutlineStatus
+  cards: OutlineCard[]
+  createdAt: string
+  updatedAt: string
+  expiresAt: string           // 24小时后过期
+}
+
+// Step 1: 创建大纲 API
+export interface CreateOutlineRequest {
+  topic: string
+  count?: number              // 卡片数量（3-7）
+  apiKey: string
+}
+
+export interface CreateOutlineResponse {
+  outlineId: string
+  topic: string
+  cards: OutlineCard[]
+  status: OutlineStatus
+}
+
+// Step 2: 更新大纲 API
+export interface UpdateOutlineRequest {
+  cards: OutlineCard[]
+}
+
+export interface UpdateOutlineResponse {
+  outlineId: string
+  status: OutlineStatus
+  updatedAt: string
+}
+
+// Step 3: 生成图片 API
+export interface GenerateImagesRequest {
+  outlineId: string
+  theme?: string              // 整体主题色
+  style?: string              // 图片风格（默认 xiaohongshu）
+  apiKey: string
+}
+
+export interface GenerateImagesResponse {
+  cards: OutlineCard[]
+  status: OutlineStatus
+}
+
+// 获取大纲 API
+export interface GetOutlineResponse {
+  outline: Outline
+}

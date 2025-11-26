@@ -1,7 +1,8 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import type {
   GeminiCardContent,
-  GeminiPPTContent
+  GeminiPPTContent,
+  OutlineCard
 } from '@xhscard/shared/types/index.js'
 
 let genAI: GoogleGenerativeAI | null = null
@@ -70,6 +71,75 @@ export async function generateCards(
   } catch (error) {
     console.error('Gemini API 错误:', error)
     throw new Error(`生成卡片失败: ${error instanceof Error ? error.message : '未知错误'}`)
+  }
+}
+
+/**
+ * 生成小红书卡片大纲（三步式流程 Step 1）
+ */
+export async function generateOutline(
+  topic: string,
+  count: number = 5
+): Promise<OutlineCard[]> {
+  if (!genAI) {
+    throw new Error('Gemini API 未初始化')
+  }
+
+  const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
+
+  const prompt = `你是一个专业的小红书内容创作助手。请根据以下主题，生成${count}张小红书风格的内容卡片大纲。
+
+主题：${topic}
+
+要求：
+1. 将主题拆分成${count}个小主题，每个主题一张卡片
+2. 每张卡片包含：
+   - title: 简短有力的标题（10-20字），要吸引眼球
+   - description: 卡片描述（20-40字），说明这张卡片的主要内容
+   - points: 3-5个要点（每个要点10-20字），使用emoji开头
+
+请以JSON数组格式返回，例如：
+[
+  {
+    "title": "秋季穿搭第一课",
+    "description": "温暖色调搭配技巧",
+    "points": ["📍 选择大地色系", "✨ 叠穿是关键", "💡 配饰点缀"]
+  }
+]
+
+请直接返回JSON，不要其他说明文字。`
+
+  try {
+    const result = await model.generateContent(prompt)
+    const response = await result.response
+    const text = response.text()
+
+    let jsonText = text.trim()
+    const codeBlockMatch = text.match(/```json?\s*([\s\S]*?)\s*```/)
+    if (codeBlockMatch) {
+      jsonText = codeBlockMatch[1].trim()
+    }
+
+    const outlines = JSON.parse(jsonText) as Array<{
+      title: string
+      description: string
+      points: string[]
+    }>
+
+    if (!Array.isArray(outlines) || outlines.length === 0) {
+      throw new Error('生成的内容格式不正确')
+    }
+
+    return outlines.slice(0, count).map((outline, index) => ({
+      id: `card-${Date.now()}-${index}`,
+      order: index + 1,
+      title: outline.title || '无标题',
+      description: outline.description || '',
+      points: Array.isArray(outline.points) ? outline.points.slice(0, 5) : [],
+    }))
+  } catch (error) {
+    console.error('Gemini API 错误:', error)
+    throw new Error(`生成大纲失败: ${error instanceof Error ? error.message : '未知错误'}`)
   }
 }
 

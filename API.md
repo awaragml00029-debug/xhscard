@@ -12,13 +12,29 @@
 
 ## 📍 API 端点概览
 
+### 小红书卡片
+
 | 方法 | 端点 | 描述 |
 |------|------|------|
-| GET | `/health` | 健康检查 |
-| POST | `/cards/generate` | 生成小红书卡片 |
+| POST | `/cards/generate` | 生成小红书卡片（一步式 - 向后兼容） |
+| POST | `/cards/outline` | **Step 1:** 生成文案大纲（三步式 - 推荐） |
+| GET | `/cards/outline/:id` | 获取大纲 |
+| PUT | `/cards/outline/:id` | **Step 2:** 更新/确认大纲 |
+| POST | `/cards/generate-images` | **Step 3:** 生成图片 |
+
+### PPT 生成
+
+| 方法 | 端点 | 描述 |
+|------|------|------|
 | POST | `/ppt/generate` | 生成 PPT 内容 |
 | POST | `/ppt/export` | 导出 PPT 文件 |
 | GET | `/ppt/themes` | 获取 PPT 主题列表 |
+
+### 其他
+
+| 方法 | 端点 | 描述 |
+|------|------|------|
+| GET | `/health` | 健康检查 |
 
 ---
 
@@ -118,7 +134,253 @@ curl -X POST http://localhost:3000/api/cards/generate \
 
 ---
 
-## 3️⃣ 生成 PPT 内容
+## 3️⃣ 三步式卡片生成（推荐）🌟
+
+这是新的推荐流程，允许用户在生成图片前预览和编辑内容。
+
+### Step 1: 生成文案大纲
+
+#### `POST /api/cards/outline`
+
+生成小红书卡片的文案大纲（不包含图片）。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 描述 | 默认值 |
+|------|------|------|------|--------|
+| `topic` | string | ✅ | 主题内容 | - |
+| `count` | number | ❌ | 卡片数量（3-7） | 5 |
+| `apiKey` | string | ✅ | Gemini API Key | - |
+
+**Example Request:**
+
+```bash
+curl -X POST http://localhost:3000/api/cards/outline \
+  -H "Content-Type: application/json" \
+  -d '{
+    "topic": "秋季穿搭指南",
+    "count": 6,
+    "apiKey": "YOUR_GEMINI_API_KEY"
+  }'
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "outlineId": "outline-1732579200000-abc123",
+    "topic": "秋季穿搭指南",
+    "cards": [
+      {
+        "id": "card-1732579200000-0",
+        "order": 1,
+        "title": "秋季穿搭第一课",
+        "description": "温暖色调搭配技巧",
+        "points": [
+          "📍 选择大地色系",
+          "✨ 叠穿是关键",
+          "💡 配饰点缀"
+        ]
+      }
+      // ... 更多卡片
+    ],
+    "status": "draft"
+  }
+}
+```
+
+**特点:**
+- ✅ 只生成文案，不生成图片
+- ✅ 快速返回（3-5秒）
+- ✅ 用户可以查看和编辑
+- ⏱️ 大纲 24 小时后自动过期
+
+---
+
+### Step 2a: 获取大纲
+
+#### `GET /api/cards/outline/:id`
+
+获取已生成的大纲。
+
+**URL Parameters:**
+
+| 参数 | 类型 | 描述 |
+|------|------|------|
+| `id` | string | 大纲 ID（从 Step 1 获取） |
+
+**Example Request:**
+
+```bash
+curl http://localhost:3000/api/cards/outline/outline-1732579200000-abc123
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "outline": {
+      "id": "outline-1732579200000-abc123",
+      "topic": "秋季穿搭指南",
+      "status": "draft",
+      "cards": [ /* ... */ ],
+      "createdAt": "2024-11-26T00:00:00.000Z",
+      "updatedAt": "2024-11-26T00:00:00.000Z",
+      "expiresAt": "2024-11-27T00:00:00.000Z"
+    }
+  }
+}
+```
+
+---
+
+### Step 2b: 更新/确认大纲
+
+#### `PUT /api/cards/outline/:id`
+
+编辑大纲内容并确认。用户可以修改标题、描述、要点，或调整顺序。
+
+**URL Parameters:**
+
+| 参数 | 类型 | 描述 |
+|------|------|------|
+| `id` | string | 大纲 ID |
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 描述 |
+|------|------|------|------|
+| `cards` | array | ✅ | 更新后的卡片数组 |
+
+**Example Request:**
+
+```bash
+curl -X PUT http://localhost:3000/api/cards/outline/outline-1732579200000-abc123 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "cards": [
+      {
+        "id": "card-1732579200000-0",
+        "order": 1,
+        "title": "修改后的标题",
+        "description": "修改后的描述",
+        "points": ["修改后的要点1", "修改后的要点2"]
+      }
+      // ... 其他卡片
+    ]
+  }'
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "outlineId": "outline-1732579200000-abc123",
+    "status": "confirmed",
+    "updatedAt": "2024-11-26T00:05:00.000Z"
+  }
+}
+```
+
+**用户可以:**
+- ✅ 修改任何内容（标题、描述、要点）
+- ✅ 添加/删除卡片
+- ✅ 调整顺序
+
+---
+
+### Step 3: 生成图片
+
+#### `POST /api/cards/generate-images`
+
+根据确认的大纲生成 AI 图片。
+
+**Request Body:**
+
+| 字段 | 类型 | 必填 | 描述 | 默认值 |
+|------|------|------|------|--------|
+| `outlineId` | string | ✅ | 大纲 ID | - |
+| `theme` | string | ❌ | 主题色 | pink |
+| `style` | string | ❌ | 图片风格 | xiaohongshu |
+| `apiKey` | string | ❌ | OpenAI API Key（用于 DALL-E 3）| - |
+
+**图片生成模式:**
+
+1. **使用 DALL-E 3**（需要 OpenAI API Key）
+   - 提供以 `sk-` 开头的 OpenAI API Key
+   - 生成真实的 AI 图片
+   - 更好的视觉效果
+   - 有成本（~$0.04/张）
+
+2. **使用占位符**（默认，无需 API Key）
+   - 不提供 `apiKey` 或提供非 OpenAI Key
+   - 生成占位符图片
+   - 适合测试流程
+   - 完全免费
+
+**Example Request (DALL-E 3):**
+
+```bash
+curl -X POST http://localhost:3000/api/cards/generate-images \
+  -H "Content-Type: application/json" \
+  -d '{
+    "outlineId": "outline-1732579200000-abc123",
+    "theme": "pink",
+    "style": "xiaohongshu",
+    "apiKey": "sk-YOUR_OPENAI_API_KEY"
+  }'
+```
+
+**Example Request (Placeholder):**
+
+```bash
+curl -X POST http://localhost:3000/api/cards/generate-images \
+  -H "Content-Type: application/json" \
+  -d '{
+    "outlineId": "outline-1732579200000-abc123",
+    "theme": "blue"
+  }'
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "cards": [
+      {
+        "id": "card-1732579200000-0",
+        "order": 1,
+        "title": "秋季穿搭第一课",
+        "description": "温暖色调搭配技巧",
+        "points": ["📍 选择大地色系", "✨ 叠穿是关键"],
+        "imageUrl": "https://oaidalleapiprodscus.blob.core.windows.net/...",
+        "status": "completed"
+      }
+      // ... 更多带图片的卡片
+    ],
+    "status": "completed"
+  }
+}
+```
+
+**特点:**
+- ✅ 使用真实的 AI 图片生成（DALL-E 3）
+- ✅ 根据文案内容生成图片
+- ✅ 保持小红书视觉风格
+- ⏱️ 较慢（每张 3-8 秒）
+- 💰 使用 DALL-E 3 有成本
+
+---
+
+## 4️⃣ 生成 PPT 内容
 
 ### `POST /api/ppt/generate`
 
