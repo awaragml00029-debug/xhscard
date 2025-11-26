@@ -5,7 +5,7 @@ import outlineRoutes from './routes/outline.routes.js'
 import pptRoutes from './routes/ppt.routes.js'
 
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 7000
 
 // 中间件
 app.use(cors())

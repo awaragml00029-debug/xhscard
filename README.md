@@ -82,10 +82,10 @@ npm install
 npm run dev
 
 # 3. 测试 API
-curl http://localhost:3000/health
+curl http://localhost:7000/health
 ```
 
-✅ API 服务器现在运行在 **http://localhost:3000**
+✅ API 服务器现在运行在 **http://localhost:7000**
 
 查看 **[API.md](./API.md)** 了解如何使用 API
 
@@ -103,7 +103,7 @@ cd client && npm run dev
 ```
 
 ✅ 前端：**http://localhost:5173**
-✅ 后端：**http://localhost:3000**
+✅ 后端：**http://localhost:7000**
 
 ---
 
@@ -216,7 +216,7 @@ POST /api/ppt/export
 
 ```typescript
 // 生成并导出 PPT
-const response = await fetch('http://localhost:3000/api/ppt/generate', {
+const response = await fetch('http://localhost:7000/api/ppt/generate', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -230,7 +230,7 @@ const response = await fetch('http://localhost:3000/api/ppt/generate', {
 const { data } = await response.json()
 
 // 导出文件
-const exportRes = await fetch('http://localhost:3000/api/ppt/export', {
+const exportRes = await fetch('http://localhost:7000/api/ppt/export', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -251,7 +251,7 @@ import requests
 
 # 生成 PPT
 response = requests.post(
-    'http://localhost:3000/api/ppt/generate',
+    'http://localhost:7000/api/ppt/generate',
     json={
         'topic': '数据分析报告',
         'slideCount': 15,
@@ -264,7 +264,7 @@ data = response.json()['data']
 
 # 导出文件
 export_response = requests.post(
-    'http://localhost:3000/api/ppt/export',
+    'http://localhost:7000/api/ppt/export',
     json={
         'slides': data['slides'],
         'theme': 'elegant-gray',

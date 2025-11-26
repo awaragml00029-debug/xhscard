@@ -2,7 +2,7 @@
 
 ## 基础信息
 
-**Base URL:** `http://localhost:3000/api`
+**Base URL:** `http://localhost:7000/api`
 
 **Content-Type:** `application/json`
 
@@ -46,7 +46,7 @@
 
 **Request:**
 ```bash
-curl http://localhost:3000/health
+curl http://localhost:7000/health
 ```
 
 **Response:**
@@ -76,7 +76,7 @@ curl http://localhost:3000/health
 **Example Request:**
 
 ```bash
-curl -X POST http://localhost:3000/api/cards/generate \
+curl -X POST http://localhost:7000/api/cards/generate \
   -H "Content-Type: application/json" \
   -d '{
     "topic": "秋季穿搭技巧",
@@ -155,7 +155,7 @@ curl -X POST http://localhost:3000/api/cards/generate \
 **Example Request:**
 
 ```bash
-curl -X POST http://localhost:3000/api/cards/outline \
+curl -X POST http://localhost:7000/api/cards/outline \
   -H "Content-Type: application/json" \
   -d '{
     "topic": "秋季穿搭指南",
@@ -214,7 +214,7 @@ curl -X POST http://localhost:3000/api/cards/outline \
 **Example Request:**
 
 ```bash
-curl http://localhost:3000/api/cards/outline/outline-1732579200000-abc123
+curl http://localhost:7000/api/cards/outline/outline-1732579200000-abc123
 ```
 
 **Success Response (200):**
@@ -259,7 +259,7 @@ curl http://localhost:3000/api/cards/outline/outline-1732579200000-abc123
 **Example Request:**
 
 ```bash
-curl -X PUT http://localhost:3000/api/cards/outline/outline-1732579200000-abc123 \
+curl -X PUT http://localhost:7000/api/cards/outline/outline-1732579200000-abc123 \
   -H "Content-Type: application/json" \
   -d '{
     "cards": [
@@ -334,7 +334,7 @@ curl -X PUT http://localhost:3000/api/cards/outline/outline-1732579200000-abc123
 **Example Request (Gemini - 推荐):**
 
 ```bash
-curl -X POST http://localhost:3000/api/cards/generate-images \
+curl -X POST http://localhost:7000/api/cards/generate-images \
   -H "Content-Type: application/json" \
   -d '{
     "outlineId": "outline-1732579200000-abc123",
@@ -347,7 +347,7 @@ curl -X POST http://localhost:3000/api/cards/generate-images \
 **Example Request (DALL-E 3):**
 
 ```bash
-curl -X POST http://localhost:3000/api/cards/generate-images \
+curl -X POST http://localhost:7000/api/cards/generate-images \
   -H "Content-Type: application/json" \
   -d '{
     "outlineId": "outline-1732579200000-abc123",
@@ -360,7 +360,7 @@ curl -X POST http://localhost:3000/api/cards/generate-images \
 **Example Request (Placeholder):**
 
 ```bash
-curl -X POST http://localhost:3000/api/cards/generate-images \
+curl -X POST http://localhost:7000/api/cards/generate-images \
   -H "Content-Type: application/json" \
   -d '{
     "outlineId": "outline-1732579200000-abc123",
@@ -420,7 +420,7 @@ curl -X POST http://localhost:3000/api/cards/generate-images \
 **Example Request:**
 
 ```bash
-curl -X POST http://localhost:3000/api/ppt/generate \
+curl -X POST http://localhost:7000/api/ppt/generate \
   -H "Content-Type: application/json" \
   -d '{
     "topic": "数字化转型策略",
@@ -508,7 +508,7 @@ curl -X POST http://localhost:3000/api/ppt/generate \
 **Example Request:**
 
 ```bash
-curl -X POST http://localhost:3000/api/ppt/export \
+curl -X POST http://localhost:7000/api/ppt/export \
   -H "Content-Type: application/json" \
   -d '{
     "slides": [...],
@@ -544,7 +544,7 @@ curl -X POST http://localhost:3000/api/ppt/export \
 **Request:**
 
 ```bash
-curl http://localhost:3000/api/ppt/themes
+curl http://localhost:7000/api/ppt/themes
 ```
 
 **Success Response (200):**
@@ -604,7 +604,7 @@ curl http://localhost:3000/api/ppt/themes
 
 ```typescript
 // Step 1: 生成 PPT 内容
-const generateResponse = await fetch('http://localhost:3000/api/ppt/generate', {
+const generateResponse = await fetch('http://localhost:7000/api/ppt/generate', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -623,7 +623,7 @@ slides[0].title = '2024年度工作总结'  // 修改封面标题
 slides[1].content.push('新增的要点')   // 添加内容
 
 // Step 3: 导出为 PPTX 文件
-const exportResponse = await fetch('http://localhost:3000/api/ppt/export', {
+const exportResponse = await fetch('http://localhost:7000/api/ppt/export', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -655,7 +655,7 @@ const topics = [
 
 for (const topic of topics) {
   // 生成内容
-  const response = await fetch('http://localhost:3000/api/ppt/generate', {
+  const response = await fetch('http://localhost:7000/api/ppt/generate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -669,7 +669,7 @@ for (const topic of topics) {
   const { data } = await response.json()
 
   // 导出文件
-  const exportResponse = await fetch('http://localhost:3000/api/ppt/export', {
+  const exportResponse = await fetch('http://localhost:7000/api/ppt/export', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

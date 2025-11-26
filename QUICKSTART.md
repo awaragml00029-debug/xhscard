@@ -33,7 +33,7 @@ npm run dev
 **✅ 看到以下输出表示启动成功：**
 ```
 🚀 XHS Card API Server is running!
-📍 Server: http://localhost:3000
+📍 Server: http://localhost:7000
 ✨ Ready to serve!
 ```
 
@@ -42,7 +42,7 @@ npm run dev
 #### 测试 1：健康检查
 
 ```bash
-curl http://localhost:3000/health
+curl http://localhost:7000/health
 ```
 
 **预期响应：**
@@ -56,7 +56,7 @@ curl http://localhost:3000/health
 #### 测试 2：生成小红书卡片
 
 ```bash
-curl -X POST http://localhost:3000/api/cards/generate \
+curl -X POST http://localhost:7000/api/cards/generate \
   -H "Content-Type: application/json" \
   -d '{
     "topic": "冬季护肤指南",
@@ -90,7 +90,7 @@ curl -X POST http://localhost:3000/api/cards/generate \
 #### 测试 3：生成 PPT
 
 ```bash
-curl -X POST http://localhost:3000/api/ppt/generate \
+curl -X POST http://localhost:7000/api/ppt/generate \
   -H "Content-Type: application/json" \
   -d '{
     "topic": "AI 发展趋势",
@@ -125,7 +125,7 @@ curl -X POST http://localhost:3000/api/ppt/generate \
 ```bash
 # 1. 先保存上一步的 slides 到文件
 # 2. 然后导出
-curl -X POST http://localhost:3000/api/ppt/export \
+curl -X POST http://localhost:7000/api/ppt/export \
   -H "Content-Type: application/json" \
   -d @request.json \
   --output my_presentation.pptx
@@ -143,7 +143,7 @@ curl -X POST http://localhost:3000/api/ppt/export \
 #### 测试 5：获取主题列表
 
 ```bash
-curl http://localhost:3000/api/ppt/themes | json_pp
+curl http://localhost:7000/api/ppt/themes | json_pp
 ```
 
 **预期响应：**
@@ -291,7 +291,7 @@ npm run build
 
 **JavaScript:**
 ```javascript
-const response = await fetch('http://localhost:3000/api/ppt/generate', {
+const response = await fetch('http://localhost:7000/api/ppt/generate', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -308,7 +308,7 @@ const response = await fetch('http://localhost:3000/api/ppt/generate', {
 import requests
 
 response = requests.post(
-    'http://localhost:3000/api/ppt/generate',
+    'http://localhost:7000/api/ppt/generate',
     json={
         'topic': '你的主题',
         'slideCount': 10,

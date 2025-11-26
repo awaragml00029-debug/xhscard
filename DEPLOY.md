@@ -33,16 +33,16 @@ cd server
 npm run dev
 ```
 
-服务器将在 **http://localhost:3000** 启动
+服务器将在 **http://localhost:7000** 启动
 
 ### 第 3 步：测试 API
 
 ```bash
 # 健康检查
-curl http://localhost:3000/health
+curl http://localhost:7000/health
 
 # 测试卡片生成（替换YOUR_API_KEY）
-curl -X POST http://localhost:3000/api/cards/generate \
+curl -X POST http://localhost:7000/api/cards/generate \
   -H "Content-Type: application/json" \
   -d '{
     "topic": "夏日穿搭指南",
@@ -51,7 +51,7 @@ curl -X POST http://localhost:3000/api/cards/generate \
   }'
 
 # 测试 PPT 生成
-curl -X POST http://localhost:3000/api/ppt/generate \
+curl -X POST http://localhost:7000/api/ppt/generate \
   -H "Content-Type: application/json" \
   -d '{
     "topic": "人工智能发展趋势",
@@ -61,7 +61,7 @@ curl -X POST http://localhost:3000/api/ppt/generate \
   }'
 
 # 获取 PPT 主题列表
-curl http://localhost:3000/api/ppt/themes
+curl http://localhost:7000/api/ppt/themes
 ```
 
 ---
@@ -154,7 +154,7 @@ NODE_ENV=production
 
 ### 1. 生成小红书卡片
 
-**POST** `http://localhost:3000/api/cards/generate`
+**POST** `http://localhost:7000/api/cards/generate`
 
 **Body (JSON):**
 ```json
@@ -186,7 +186,7 @@ NODE_ENV=production
 
 ### 2. 生成 PPT
 
-**POST** `http://localhost:3000/api/ppt/generate`
+**POST** `http://localhost:7000/api/ppt/generate`
 
 **Body (JSON):**
 ```json
@@ -220,7 +220,7 @@ NODE_ENV=production
 
 ### 3. 导出 PPT 文件
 
-**POST** `http://localhost:3000/api/ppt/export`
+**POST** `http://localhost:7000/api/ppt/export`
 
 **Body (JSON):**
 ```json
@@ -241,7 +241,7 @@ NODE_ENV=production
 
 ```typescript
 // 生成卡片
-const response = await fetch('http://localhost:3000/api/cards/generate', {
+const response = await fetch('http://localhost:7000/api/cards/generate', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -255,7 +255,7 @@ const { data } = await response.json()
 console.log(data.cards)
 
 // 生成并导出 PPT
-const pptResponse = await fetch('http://localhost:3000/api/ppt/generate', {
+const pptResponse = await fetch('http://localhost:7000/api/ppt/generate', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -269,7 +269,7 @@ const pptResponse = await fetch('http://localhost:3000/api/ppt/generate', {
 const { data: pptData } = await pptResponse.json()
 
 // 导出为文件
-const exportResponse = await fetch('http://localhost:3000/api/ppt/export', {
+const exportResponse = await fetch('http://localhost:7000/api/ppt/export', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -294,7 +294,7 @@ import requests
 
 # 生成 PPT
 response = requests.post(
-    'http://localhost:3000/api/ppt/generate',
+    'http://localhost:7000/api/ppt/generate',
     json={
         'topic': '机器学习入门',
         'slideCount': 15,
@@ -308,7 +308,7 @@ slides = data['data']['slides']
 
 # 导出 PPT
 export_response = requests.post(
-    'http://localhost:3000/api/ppt/export',
+    'http://localhost:7000/api/ppt/export',
     json={
         'slides': slides,
         'theme': 'tech-purple',

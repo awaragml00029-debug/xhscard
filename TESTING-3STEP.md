@@ -39,7 +39,7 @@ npm run dev
 看到以下输出表示启动成功：
 ```
 🚀 XHS Card API Server is running!
-📍 Server: http://localhost:3000
+📍 Server: http://localhost:7000
 ```
 
 ---
@@ -51,7 +51,7 @@ npm run dev
 **API:** `POST /api/cards/outline`
 
 ```bash
-curl -X POST http://localhost:3000/api/cards/outline \
+curl -X POST http://localhost:7000/api/cards/outline \
   -H "Content-Type: application/json" \
   -d '{
     "topic": "秋季穿搭指南",
@@ -97,7 +97,7 @@ curl -X POST http://localhost:3000/api/cards/outline \
 **API:** `GET /api/cards/outline/:id`
 
 ```bash
-curl http://localhost:3000/api/cards/outline/outline-1732579200000-abc123 | json_pp
+curl http://localhost:7000/api/cards/outline/outline-1732579200000-abc123 | json_pp
 ```
 
 #### 2.2 编辑大纲（可选）
@@ -112,7 +112,7 @@ curl http://localhost:3000/api/cards/outline/outline-1732579200000-abc123 | json
 - 添加/删除卡片
 
 ```bash
-curl -X PUT http://localhost:3000/api/cards/outline/outline-1732579200000-abc123 \
+curl -X PUT http://localhost:7000/api/cards/outline/outline-1732579200000-abc123 \
   -H "Content-Type: application/json" \
   -d '{
     "cards": [
@@ -154,7 +154,7 @@ curl -X PUT http://localhost:3000/api/cards/outline/outline-1732579200000-abc123
 #### 3.1 使用 Gemini 生成真实图片（推荐 ⭐）
 
 ```bash
-curl -X POST http://localhost:3000/api/cards/generate-images \
+curl -X POST http://localhost:7000/api/cards/generate-images \
   -H "Content-Type: application/json" \
   -d '{
     "outlineId": "outline-1732579200000-abc123",
@@ -173,7 +173,7 @@ curl -X POST http://localhost:3000/api/cards/generate-images \
 #### 3.2 使用 DALL-E 3 生成真实图片（备选）
 
 ```bash
-curl -X POST http://localhost:3000/api/cards/generate-images \
+curl -X POST http://localhost:7000/api/cards/generate-images \
   -H "Content-Type: application/json" \
   -d '{
     "outlineId": "outline-1732579200000-abc123",
@@ -186,7 +186,7 @@ curl -X POST http://localhost:3000/api/cards/generate-images \
 #### 3.3 使用占位符图片（免费测试）
 
 ```bash
-curl -X POST http://localhost:3000/api/cards/generate-images \
+curl -X POST http://localhost:7000/api/cards/generate-images \
   -H "Content-Type: application/json" \
   -d '{
     "outlineId": "outline-1732579200000-abc123",
@@ -255,7 +255,7 @@ echo "======================================"
 # Step 1: 生成大纲
 echo ""
 echo "📝 Step 1: 生成文案大纲..."
-OUTLINE_RESPONSE=$(curl -s -X POST http://localhost:3000/api/cards/outline \
+OUTLINE_RESPONSE=$(curl -s -X POST http://localhost:7000/api/cards/outline \
   -H "Content-Type: application/json" \
   -d "{
     \"topic\": \"$TOPIC\",
@@ -274,7 +274,7 @@ echo "✅ 大纲 ID: $OUTLINE_ID"
 echo ""
 echo "📖 Step 2: 查看大纲..."
 sleep 2
-curl -s http://localhost:3000/api/cards/outline/$OUTLINE_ID | json_pp
+curl -s http://localhost:7000/api/cards/outline/$OUTLINE_ID | json_pp
 
 # Step 3: 生成图片
 echo ""
@@ -283,7 +283,7 @@ sleep 2
 
 if [ -n "$OPENAI_KEY" ]; then
   echo "使用 DALL-E 3 生成真实图片..."
-  curl -s -X POST http://localhost:3000/api/cards/generate-images \
+  curl -s -X POST http://localhost:7000/api/cards/generate-images \
     -H "Content-Type: application/json" \
     -d "{
       \"outlineId\": \"$OUTLINE_ID\",
@@ -293,7 +293,7 @@ if [ -n "$OPENAI_KEY" ]; then
     }" | json_pp
 else
   echo "使用占位符图片..."
-  curl -s -X POST http://localhost:3000/api/cards/generate-images \
+  curl -s -X POST http://localhost:7000/api/cards/generate-images \
     -H "Content-Type: application/json" \
     -d "{
       \"outlineId\": \"$OUTLINE_ID\",
